@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using CurrencyConverterAPI.Interfaces;
 using CurrencyConverterAPI.Middleware;
 using CurrencyConverterAPI.Services;
@@ -31,6 +32,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddMemoryCache();
+
+builder.Services.Configure<IpRateLimitOptions>(options =>
+{
+    options.GeneralRules = new List<RateLimitRule>
+        {
+            new RateLimitRule
+            {
+                Endpoint = "*",
+                Limit = 50, // Maximum number of requests per time span
+                Period = "10m" // Time span (e.g., "1h" for 1 hour)
+            }
+        };
+});
+
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+
 builder.Services.AddHttpClient();
 builder.Services.AddCors(p =>
 {
@@ -58,6 +79,8 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseIpRateLimiting();
 
 app.MapControllers();
 

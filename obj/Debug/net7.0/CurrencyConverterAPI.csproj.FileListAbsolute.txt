@@ -42,3 +42,5 @@ C:\Users\Tanuj\source\repos\CurrencyConverterAPI\obj\Debug\net7.0\refint\Currenc
 C:\Users\Tanuj\source\repos\CurrencyConverterAPI\obj\Debug\net7.0\CurrencyConverterAPI.pdb
 C:\Users\Tanuj\source\repos\CurrencyConverterAPI\obj\Debug\net7.0\CurrencyConverterAPI.genruntimeconfig.cache
 C:\Users\Tanuj\source\repos\CurrencyConverterAPI\obj\Debug\net7.0\ref\CurrencyConverterAPI.dll
+C:\Users\Tanuj\source\repos\CurrencyConverterAPI\obj\Debug\net7.0\CurrencyConverterAPI.sourcelink.json
+C:\Users\Tanuj\source\repos\CurrencyConverterAPI\bin\Debug\net7.0\AspNetCoreRateLimit.dll

@@ -1,11 +1,12 @@
 ﻿using CurrencyConverterAPI.Extensions;
 using CurrencyConverterAPI.Interfaces;
 using CurrencyConverterAPI.Models;
+using Newtonsoft.Json;
 using System.Net;
 
 namespace CurrencyConverterAPI.Services
 {
-    public class CurrencyConverterService: ICurrencyConverter
+    public class CurrencyConverterService : ICurrencyConverter
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<CurrencyConverterService> _logger;
@@ -23,13 +24,16 @@ namespace CurrencyConverterAPI.Services
 
         public async Task<ApiResponse> GetDataFromFrankFurterAsync(string CurrencyCode, CancellationToken token)
         {
-            CurrencyCode = valdiateCurrencyCode(CurrencyCode);
-            if (CurrencyCode == null)
+            var (validatedCurrencyCode, errorMessage) = await ValidateCurrencyCodeAsync(CurrencyCode);
+            if (validatedCurrencyCode == null)
             {
-                return new ApiResponse { IsSuccess = false, ErrorMessage = "Currency code must be three alphabetic characters." };
+                return new ApiResponse { IsSuccess = false, ErrorMessage = errorMessage };
             }
+
+            CurrencyCode = validatedCurrencyCode;
+
             string baseURL = "https://api.frankfurter.app/latest";
-            if(!string.IsNullOrEmpty(CurrencyCode) )
+            if (!string.IsNullOrEmpty(CurrencyCode))
             {
                 baseURL += "?from=" + CurrencyCode;
             }
@@ -46,22 +50,54 @@ namespace CurrencyConverterAPI.Services
             }
         }
 
-        private string? valdiateCurrencyCode(string currencyCode)
+        private async Task<(string?, string)> ValidateCurrencyCodeAsync(string currencyCode)
         {
-            if (string.IsNullOrEmpty(currencyCode) || currencyCode.Length != 3)
+            if (string.IsNullOrEmpty(currencyCode))
             {
-                return null;
+                return (null, "Currency code must not be empty.");
+            }
+
+            if (currencyCode.Length != 3)
+            {
+                return (null, "Currency code must be three characters long.");
             }
 
             foreach (char c in currencyCode)
             {
                 if (!char.IsLetter(c))
                 {
-                    return null;
+                    return (null, "Currency code must contain only alphabetic characters.");
                 }
             }
 
-            return currencyCode.ToUpper();
+            var currencies = await GetAllCurrenciesFromFrankFurterAsync();
+
+            if (!currencies.Contains(currencyCode.ToUpper()))
+            {
+                return (null, "Invalid currency code.");
+            }
+            return (currencyCode.ToUpper(), string.Empty);
         }
+
+        private async Task<List<string>> GetAllCurrenciesFromFrankFurterAsync()
+        {
+            string baseURL = "https://api.frankfurter.app/currencies";
+
+            try
+            {
+                var response = await _httpClient.GetWithMultipleRetryAsync(baseURL);
+                response.EnsureSuccessStatusCode();
+                var currenciesJson = await response.Content.ReadAsStringAsync();
+                var currenciesObject = JsonConvert.DeserializeObject<Dictionary<string, string>>(currenciesJson);
+
+                var currencies = currenciesObject.Keys.ToList();
+                return currencies;
+            }
+            catch (HttpRequestException ex)
+            {
+                return new List<string>();
+            }
+        }
+
     }
 }

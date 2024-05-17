@@ -27,5 +27,12 @@ namespace CurrencyConverterAPI.Controllers
             }
             return Ok(result.Data);
         }
+
+        //[HttpGet("convertcurrency")]
+        //public async Task<IActionResult> ConvertCurrency(decimal amount, string fromCurrency, string toCurrency)
+        //{
+        //    // Implement conversion logic
+        //}
+
     }
 }
