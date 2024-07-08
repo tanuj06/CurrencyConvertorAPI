@@ -1,0 +1,55 @@
+# Ignore Visual Studio temporary files, build results, and user-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (Mono Auto Generated)
+mono_crash.*
+
+# Auto-generated files
+*.log
+
+# Ignore .vscode folder
+.vscode/
+.vscode/**/*
+
+# Ignore project-specific settings
+*.vsidx
+.vs/
+*.csproj.user
+.history/
+.ionide/
+
+# Ignore build artifacts
+bin/
+obj/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/ 
+
+# Ignore bin and obj folders in CurrencyConverterAPI
+/CurrencyConverterAPI/bin/
+/CurrencyConverterAPI/obj/
+
+# Ignore bin and obj folders in CurrencyConverterAPI-Tests
+/CurrencyConverterAPI-Tests/bin/
+/CurrencyConverterAPI-Tests/obj/
